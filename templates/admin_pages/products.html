@@ -1,0 +1,713 @@
+{% extends "admin_pages/base_admin.html" %}
+
+{% block additional_styles %}
+
+div.heading{
+background-color:rgb(222, 214, 214);
+width:100%;
+height: 100px;
+border-radius: 5px;
+margin-bottom: 10px;
+margin-top: 10px;
+}
+div.heading h1{
+margin:10px;
+padding-left: 20px;
+padding-top: 35px;
+text-align: center;
+color: red;
+font-style: italic;
+font-weight:bolder;
+font-size: 25px;
+}
+form label{
+font-weight:bold;
+}
+
+button.custom-button {
+padding: 5px 10px;
+margin-right: 10px;
+border: none;
+border-radius: 50px;
+background-color: black;
+color: white;
+font-size: 14px;
+height: 20px;
+}
+
+.tag-button {
+margin: 3px;
+margin-right: 5px;
+border-radius: 6px;
+min-height: 40px;
+min-width: 60px;
+font-weight:bold;
+}
+.custom-file-upload {
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+    background-color: #007bff;
+
+    color: #fff;
+    border: 1px solid #007bff;
+    border-radius: 4px;
+    margin-top:27px;
+    width: 100%;
+    text-align:center;
+    }
+
+.custom-file-upload:hover {
+background-color: #0056b3;
+}
+.modal {
+display: none;
+position: fixed;
+z-index: 1;
+left: 0;
+top: 0;
+width: 100%;
+height: 100%;
+overflow: auto;
+background-color: rgba(0,0,0,0.7);
+}
+
+.modal-content {
+margin: 15% auto;
+padding: 20px;
+border: 1px solid #888;
+width: 80%;
+background-color: #fff;
+}
+
+.close {
+position: absolute;
+right: 10px;
+top: 10px;
+font-size: 20px;
+font-weight: bold;
+color: #888;
+cursor: pointer;
+}
+
+img.modal-image {
+max-width: 100%;
+max-height: 80vh;
+display: block;
+margin: 0 auto;
+}
+
+div.image-button-container button{
+background-color:black;
+color:white;
+height: 50px;
+min-width: 30px;
+padding:5px;
+font-weight:bold;
+}
+
+.image-buttons-container {
+display: flex;
+flex-wrap: wrap; 
+gap: 10px; /* Adjust the gap between buttons */
+align-items: center; 
+margin-bottom: 6px;
+}
+
+/* Style for each image button container */
+.image-button-container {
+display: flex;
+align-items: center;
+background-color: #f0f0f0; /* Background color for each container */
+border: 1px solid #ddd;
+border-radius: 5px;
+padding: 5px;
+}
+
+/* Style for the "View Image" button */
+.image-button {
+background-color: #007bff;
+color: #fff;
+border: none;
+border-radius: 4px;
+margin-right: 5px;
+cursor: pointer;
+}
+
+/* Style for the "X" button */
+.remove-button {
+background-color: #ff0000;
+color: #fff;
+border: none;
+border-radius: 4px;
+cursor: pointer;
+}
+
+
+
+.selected-image-button {
+background-color: black;
+color: white;
+border: none;
+border-radius: 10px;
+padding: 7px;
+margin: 5px;
+cursor: pointer;
+}
+
+.remove-image-button {
+background-color: black;
+color: white;
+border: none;
+border-radius: 10px;
+padding: 5px 10px;
+margin-left: 10px; /* Added margin-left for spacing */
+cursor: pointer;
+}
+
+#removeAllAdditionalImagesBtn {
+background-color: red;
+color: white;
+
+cursor: pointer;
+}
+<style>
+    .image-buttons-container {
+display: flex;
+flex-wrap: wrap; 
+gap: 10px; /* Adjust the gap between buttons */
+align-items: center; 
+margin-bottom: 6px;
+}
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+</style>
+<div class="content container-fluid">
+    
+
+    <div class="addNewProduct">
+        <div class="heading">
+            <h1>Add New Product</h1>
+        </div>
+        <!-- <div class="formDiv"> -->
+
+        <!-- <form enctype="multipart/form-data" method="POST" action=""> -->
+        <form enctype="multipart/form-data" method="POST" action="{% url 'create-product' %}">
+
+            {% csrf_token %}
+            <div class="form">
+                <div class="form-row">
+                    <div class="col-md-6 mb-3">
+                        <label for="productnameLabel">Product Name</label>
+                        <!-- <input type="text" class="form-control" id="product_name" name="product_name"
+                            placeholder="eg:- Asus TUFF Lap" required> -->
+                        {{ product_form.product_name }}
+
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="mrpLabel">MRP</label>
+                        <!-- <input type="number" class="form-control" id="mrp" name="mrp" placeholder="eg:- 60000" required> -->
+                        {{ product_form.mrp }}
+
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="sellpriceLabel">Selling Price</label>
+                        <!-- <input type="number" class="form-control" id="sell_price" name="sell_price" placeholder="eg:- 55000"
+                            required> -->
+                        {{ product_form.sell_price }}
+                    </div>
+
+                </div>
+                <div class="form-row">
+                    <div class="col-md-3 mb-3">
+                        <label for="stockLabel">Stock</label>
+                        <!-- <input type="number" class="form-control" id="stock" name="stock" placeholder="eg:- 5" required> -->
+                        {{ product_form.stock }}
+
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <label for="categoryLabel">Category</label>
+                        <select class="form-control" id="categorySelect" name="{{ product_form.categorySelect.name }}"
+                            required>
+                            <option value="">{{ product_form.categorySelect.choices.0.1 }}</option>
+                            {% for categoryId, categoryName in categories.items %}
+                            <option value="{{ categoryId }}">{{ categoryName }}</option>
+                            {% endfor %}
+                        </select>
+
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <label for="subcategoryLabel">Sub-Category</label>
+                        <select class="form-control" id="subcategorySelect"
+                            name="{{ product_form.subcategorySelect.name }}" required>
+                            <option value="">Select a Sub-Category</option>
+                            {% for subcategoryId, subcategoryName in subcategories.items %}
+                            <option value="{{ subcategoryId }}">{{ subcategoryName }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <label for="companyLabel">Company</label>
+                        <select class="form-control" id="companySelect" name="{{ product_form.companySelect.name }}"
+                            required>
+                            <option value="">{{ product_form.companySelect.choices.0.1 }}</option>
+                            {% for companyId, companyName in companies.items %}
+                            <option value="{{ companyId }}">{{ companyName }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="col-md-8 mb-3">
+                        {{ product_form.description }}
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <img id="selectedImage" src="" alt="Selected Image" style="max-height: 20rem; max-width: 100%;">
+
+                    </div>
+
+                </div>
+                <div class="form-row">
+
+                    <div class="col-md-2 mb-3">
+                        <label for="tagsLabel">Enter Tags</label>
+
+                        {{ product_form.textInput }}
+
+
+
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <button id="createButton" type="button" disabled
+                            style="height: 60px; width: 120px; margin:5px">Create
+                            Tags</button>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div id="buttonContainer"></div>
+                    </div>
+                    <div class="col-md-2 mb-3">
+
+                        <label for="image">Product Image:</label>
+
+                        {{ product_form.file }}
+
+                    </div>
+
+
+                </div>
+                <div class="form-row">
+                    <div class="col-md-12 mb-3">
+                        <label for="additionalImagesLabel">Additional Images:</label>
+                        <div id="additionalImagesContainer" style="display: flex; flex-wrap: wrap; width: 100%;">
+                            <!-- Initial file input element -->
+                            
+                            <div class="inputFilesDiv">
+                                <input type="file" name="additional_images_0" id="additional_images_0"
+                                    accept="image/*" multiple>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-4 mb-3">
+                        
+                        <div class="buttons" style="display: flex; flex-direction: row; width:100%">
+                            <button class="custom-file-upload" type="button" id="addAdditionalImageBtn" style="width: 60%;">Add Another
+                                Image</button>
+                            <button class="custom-file-upload" type="button" id="removeAllAdditionalImagesBtn"
+                                style="display: none;">Remove All Images</button>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+            </div>
+
+            <div class="text-center">
+                <button class="btn btn-primary" id="submitButton" type="submit" value="Upload"
+                    onclick="location.reload();"><b>Submit</b></button>
+
+            </div>
+
+        </form>
+        <!-- </div> -->
+    </div>
+
+
+    <div class="updateExistProduct">
+        <div class="heading">
+            <h1>Update Existing Product</h1>
+        </div>
+    </div>
+</div>
+<script>
+    const productTitleInput = document.getElementById('productTitle');
+const productDescriptionInput = document.getElementById('productDescription'); // Assuming you have an input field for description
+
+// Add an event listener to the input fields to trigger requests as the title or description changes
+productTitleInput.addEventListener('input', handleInputChange);
+productDescriptionInput.addEventListener('input', handleInputChange);
+
+function handleInputChange() {
+    const title = productTitleInput.value;
+    const description = productDescriptionInput.value;
+
+    if (title && description) {
+        // If both title and description are provided, send a request with both as parameters
+        fetch(`http://127.0.0.1:8000/ml/${title}/${description}/`)
+            .then(response => response.json())
+            .then(data => {
+                // Handle the response data as needed
+                // receivedCategoryId = document.getElementById(data.categoryId);
+                const receivedCategoryId = data.category_id; // Replace 'data.category_id' with the actual variable name
+                console.log(receivedCategoryId)
+                // Get the category select element
+                const categorySelect = document.getElementById('categorySelect');
+
+                // Iterate through the options and select the one with the matching value
+                for (let i = 0; i < categorySelect.options.length; i++) {
+                    const option = categorySelect.options[i];
+                    // print(option)
+                    if (option.value == receivedCategoryId) {
+                        option.selected = true; // Set the 'selected' property to true for the matching option
+                        break; // Exit the loop once a match is found
+                    }
+                }
+              
+            })
+            .catch(error => console.error('Error fetching ML data:', error));
+    } else if (title) {
+        // title = String(title)
+        // If only title is provided, send a request with just the title as a parameter
+        fetch(`http://127.0.0.1:8000/ml/${String(title)}/${String(title)}/`)
+            .then(response => response.json())
+            .then(data => {
+                // Handle the response data as needed
+                receivedCategoryId = data.category_id; // Replace 'data.category_id' with the actual variable name
+                
+                // console.log(receivedCategoryId)
+                console.log(receivedCategoryId)
+                // Get the category select element
+                const categorySelect = document.getElementById('categorySelect');
+
+       
+                for (let i = 0; i < categorySelect.options.length; i++) {
+                    const option = categorySelect.options[i];
+
+                    console.log(option.value);
+                    if (option.value == receivedCategoryId) {
+                        option.selected = true; 
+                        const changeEvent = new Event('change', {
+                            bubbles: true, 
+                            cancelable: true, 
+                        });
+
+                        
+                        categorySelect.dispatchEvent(changeEvent);
+                        break; 
+                    }
+                }
+
+            })
+            .catch(error => console.error('Error fetching ML data:', error));
+    }
+}
+
+
+</script>
+
+<script>
+    const additionalImagesInput = document.getElementById('additionalImages');
+    const addAdditionalImagesBtn = document.getElementById('addAdditionalImagesBtn');
+    const selectedAdditionalImagesContainer = document.getElementById('selectedAdditionalImagesContainer');
+    const imageFiles = [];
+
+
+    const tagsArray = [];
+
+    function createTagButton(tagText) {
+        const buttonContainer = document.getElementById('buttonContainer');
+
+
+        const tagButton = document.createElement('button');
+        tagButton.className = 'tag-button custom-button';
+        tagButton.textContent = tagText;
+        tagButton.type = 'button';
+
+
+        tagButton.addEventListener('click', function () {
+            buttonContainer.removeChild(tagButton);
+            const index = tagsArray.indexOf(tagText);
+            if (index !== -1) {
+                tagsArray.splice(index, 1);
+            }
+        });
+
+
+        buttonContainer.appendChild(tagButton);
+        tagsArray.push(tagText);
+    }
+
+
+    document.getElementById('{{ product_form.textInput.id_for_label }}').addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+
+            const tagInput = document.getElementById('{{ product_form.textInput.id_for_label }}');
+            const tagText = tagInput.value.trim();
+
+            if (tagText) {
+                createTagButton(tagText);
+                tagInput.value = '';
+            }
+        }
+    });
+
+    // Event listener for the "Create Tags" button (optional)
+    document.getElementById('createButton').addEventListener('click', function () {
+        const tagInput = document.getElementById('{{ product_form.textInput.id_for_label }}');
+        const tagText = tagInput.value.trim(); // Remove leading/trailing spaces
+
+        if (tagText) {
+            createTagButton(tagText); // Create a tag button
+            tagInput.value = ''; // Clear the input field
+        }
+    });
+
+    // Enable the "Create Tags" button when there's input
+    document.getElementById('{{ product_form.textInput.id_for_label }}').addEventListener('input', function () {
+        const tagInput = document.getElementById('{{ product_form.textInput.id_for_label }}');
+        const createButton = document.getElementById('createButton');
+        createButton.disabled = tagInput.value.trim() === '';
+    });
+    document.addEventListener('DOMContentLoaded', function () {
+        const additionalImagesContainer = document.getElementById('additionalImagesContainer');
+        const addAdditionalImageBtn = document.getElementById('addAdditionalImageBtn');
+        const removeAllAdditionalImagesBtn = document.getElementById('removeAllAdditionalImagesBtn');
+
+        let imageCount = 1; // Initial image input count
+
+        addAdditionalImageBtn.addEventListener('click', function () {
+            // Create a new file input element
+            const newInput = document.createElement('input');
+            newInput.type = 'file';
+            newInput.name = `additional_images_${imageCount}`;
+            // newInput.className = 'custom-file-upload';
+            newInput.accept = 'image/*';
+            newInput.multiple = true;
+
+            // Append the new input to the container
+            const inputFilesDiv = document.createElement('div');
+            inputFilesDiv.className = 'inputFilesDiv';
+            inputFilesDiv.appendChild(newInput);
+            additionalImagesContainer.appendChild(inputFilesDiv);
+
+            // Increment the image count
+            imageCount++;
+            
+
+            // Show the "Remove All Images" button
+            removeAllAdditionalImagesBtn.style.display = 'block';
+        });
+
+        removeAllAdditionalImagesBtn.addEventListener('click', function () {
+            // Remove all dynamically added input elements and reset the count
+            while (additionalImagesContainer.firstChild) {
+                additionalImagesContainer.removeChild(additionalImagesContainer.firstChild);
+            }
+            imageCount = 1;
+
+            // Hide the "Remove All Images" button
+            removeAllAdditionalImagesBtn.style.display = 'none';
+        });
+    });
+    document.querySelector('form').addEventListener('submit', function (event) {
+        event.preventDefault(); // Prevent the default form submission behavior
+
+        // Create a new FormData object from the form
+        const formData = new FormData(this);
+
+        const jsonObject = {
+            tags: tagsArray
+        };
+        const jsonString = JSON.stringify(jsonObject);
+        formData.append('tagsData', jsonString);
+        // You can access the form data here if needed
+        // For example, to get the product name: formData.get('product_name')
+
+        // Send a POST request to the server using fetch
+        fetch('{% url "create-product" %}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                // Add any headers you need, e.g., CSRF token
+                // 'X-CSRFToken': getCSRFToken() // Assuming you have a function to get the CSRF token
+            }
+        })
+            .then(response => response.json()) // Assuming the server responds with JSON
+            .then(data => {
+                // Handle the response data, e.g., show a success message or redirect
+                // console.log(data);
+
+            })
+        // .catch(error => {
+        //     // console.error('Error:', error);
+        //     // Handle errors here, e.g., show an error message to the user
+        // });
+    });
+
+    // Function to get the CSRF token (assuming it's stored in a meta tag)
+    function getCSRFToken() {
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').getAttribute('content');
+        return csrfToken;
+    }
+
+
+</script>
+
+<script>
+
+
+    // Step 1
+    function populateCategories() {
+        fetch('http://127.0.0.1:8000/api/get_categories')
+            .then(response => response.json())
+            .then(data => {
+                const categorySelect = document.getElementById('categorySelect');
+
+
+                categorySelect.innerHTML = '';
+
+
+                const defaultCategoryOption = document.createElement('option');
+                defaultCategoryOption.value = '';
+                defaultCategoryOption.textContent = 'Select a Category';
+                categorySelect.appendChild(defaultCategoryOption);
+
+
+                for (const categoryId in data) {
+                    const option = document.createElement('option');
+                    option.value = categoryId;
+                    option.textContent = data[categoryId];
+                    option.id = data[categoryId];
+                    categorySelect.appendChild(option);
+                }
+
+
+                categorySelect.addEventListener('change', function () {
+                    const selectedCategoryId = categorySelect.value;
+
+
+                    if (selectedCategoryId) {
+
+                        fetch(`http://127.0.0.1:8000/api/get_subcategory/${selectedCategoryId}`)
+                            .then(response => response.json())
+                            .then(subcategoryData => {
+                                const subcategorySelect = document.getElementById('subcategorySelect');
+
+
+                                subcategorySelect.innerHTML = '';
+
+
+                                const defaultSubcategoryOption = document.createElement('option');
+                                defaultSubcategoryOption.value = '';
+                                defaultSubcategoryOption.textContent = 'Select a Sub-Category';
+                                subcategorySelect.appendChild(defaultSubcategoryOption);
+
+
+                                for (const subcategoryId in subcategoryData) {
+                                    const option = document.createElement('option');
+                                    option.value = subcategoryId;
+                                    option.textContent = subcategoryData[subcategoryId];
+                                    subcategorySelect.appendChild(option);
+                                }
+                            })
+                            .catch(error => console.error('Error fetching subcategories:', error));
+                    } else {
+
+                        const subcategorySelect = document.getElementById('subcategorySelect');
+                        subcategorySelect.innerHTML = '';
+                    }
+                });
+            })
+            .catch(error => console.error('Error fetching categories:', error));
+    }
+
+    // Function to populate the company select element
+    function populateCompanies() {
+        fetch('http://127.0.0.1:8000/api/get_companies')
+            .then(response => response.json())
+            .then(data => {
+                const companySelect = document.getElementById('companySelect');
+
+                // Clear any existing options in the company select element
+                companySelect.innerHTML = '';
+
+                // Add the default "Select a Company" option
+                const defaultCompanyOption = document.createElement('option');
+                defaultCompanyOption.value = '';
+                defaultCompanyOption.textContent = 'Select a Company';
+                companySelect.appendChild(defaultCompanyOption);
+
+                // Iterate through the JSON response and add options for each company
+                for (const companyId in data) {
+                    const option = document.createElement('option');
+                    option.value = companyId; // Set the value to the company ID
+                    option.textContent = data[companyId]; // Set the text content to the company name
+                    companySelect.appendChild(option);
+                }
+            })
+            .catch(error => console.error('Error fetching companies:', error));
+    }
+
+    // Call the populateCompanies function to populate the company select element
+    populateCompanies();
+
+    populateCategories();
+
+
+</script>
+
+<script>
+    // Get references to the file input and image elements
+    const fileInput = document.getElementById('id_file'); // Replace 'id_file' with the actual ID of your file input
+    const selectedImage = document.getElementById('selectedImage');
+
+    // Add an event listener to the file input for when a file is selected
+    fileInput.addEventListener('change', function () {
+        if (fileInput.files && fileInput.files[0]) {
+            const reader = new FileReader();
+
+            // Read the selected file as a data URL
+            reader.onload = function (e) {
+                selectedImage.src = e.target.result; // Set the image source to the data URL
+            };
+
+            reader.readAsDataURL(fileInput.files[0]);
+        } else {
+            // Clear the image source if no file is selected
+            selectedImage.src = '';
+        }
+    });
+</script>
+
+<script>
+
+
+
+</script>
+{% endblock %}
+
+{% block direBtn %}Products{% endblock %}

@@ -1,0 +1,188 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    {% block head %}
+    {% endblock %}
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="shortcut icon" href="/media/shop/icons/favicon.png" type="image/x-icon">
+    
+    <style>
+        /* Common styles for both divs */
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            /* width: 100%; */
+            background-color: black;
+        }
+
+        .container {
+            display: flex;
+            /* height: 100%; */
+
+        }
+
+        .leftdiv {
+            flex: 0 0 15%;
+            background-color: #000000;
+            padding: 20px;
+            color: #f8f8f8;
+            overflow-y: auto;
+        }
+
+        .leftdiv h2 {
+            text-align: center;
+
+        }
+
+        button.admOpt {
+            margin-top: 9px;
+            height: 100px;
+            width: 100%;
+            background-color: #322e2e;
+            font-size: 18px;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: 600;
+            color: rgb(173, 178, 178);
+            border: #000000 2px solid;
+            border-radius: 15px;
+            transition: background-color 0.3s, color 0.3s, transform 0.2s, box-shadow 0.3s;
+        }
+
+        button.admOpt:hover {
+            background-color: #dad0d0;
+            color: #000000;
+            cursor: pointer;
+            font-weight: bolder;
+            transform: scale(1.05);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .rightdiv {
+            flex: 1;
+            background-color: #dad0d0;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            font-weight: bolder;
+            font-style: italic;
+            background-color: #dad0d0;
+        }
+
+        .breadcrumb a {
+            color: #121313;
+            transition: color 0.3s;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            color: #27292a;
+        }
+
+        .breadcrumb span {
+            margin: 0 5px;
+            color: #010202;
+        }
+
+            
+
+        
+
+        div.heading {
+            background-color: rgb(222, 214, 214);
+            width: 100%;
+            height: 100px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            margin-top: 10px;
+        }
+
+        div.heading h1 {
+            margin: 10px;
+            padding-left: 20px;
+            padding-top: 35px;
+            text-align: center;
+            color: red;
+            font-style: italic;
+            font-weight: bolder;
+            font-size: 25px;
+        }
+
+        form label {
+            font-weight: bold;
+        }
+        {% block  additional_styles %}{% endblock %}
+
+            
+    </style>
+
+</head>
+
+<body>
+    <div class="container-fluid w-100" style="display: flex; height: 100%;margin-left: 0;padding: 0;">
+        <div class="leftdiv">
+
+            <h2><a href="/adminSector" style="color: #f8f8f8;">Admin Options</a></h2>
+            <a href="/adminSector/products"><button class="admOpt" id="btnProducts"
+                    onclick="setActiveButton('btnProducts')">Add/Alter <br>Products</button></a>
+            <a href="/adminSector/company"><button class="admOpt" id="btnCompany"
+                    onclick="setActiveButton('btnCompany')">Add/Alter <br>Company/Organisation</button></a>
+            <a href="/adminSector/catSubcat"><button class="admOpt" id="btnCategory"
+                    onclick="setActiveButton('btnCategory')">Add/Alter <br>Category & Sub-Category</button></a>
+            
+            <a href="/adminSector/stats"><button class="admOpt" id="btnStats" onclick="setActiveButton('btnStats')">Statistics</button></a>
+                
+            {% comment %} <a href="/adminSector/stats">Statistics</a> {% endcomment %}
+            <br>
+            <a href="/logout/"><button class="admOpt" id="btnLogout"
+                    onclick="setActiveButton('btnLogout')">Logout</button></a>
+        </div>
+        <div class="rightdiv">
+            <div class="breadcrumb">
+                <a href="#">ADMIN</a>
+                <span>/</span>
+                <a href="#">{% block direBtn %}{% endblock %}</a>
+            </div>
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+    <script>
+        function setActiveButton(buttonId) {
+            const buttons = document.querySelectorAll('.admOpt');
+            buttons.forEach(button => {
+                if (button.id === buttonId) {
+                    button.style.backgroundColor = 'white';
+                    button.style.color = '#000000';
+                } else {
+                    button.style.backgroundColor = '#322e2e';
+                    button.style.color = 'rgb(173, 178, 178)';
+                }
+            });
+        }
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.1.js"
+        integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
+        integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
+        integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

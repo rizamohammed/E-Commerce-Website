@@ -1,0 +1,416 @@
+{% extends 'main_pages/base.html' %}
+
+{% block styleCss %}
+<style>
+    * {
+        padding: 0;
+        margin: 0;
+    }
+    body{
+        background-color: #e2e3e4;
+    }
+
+    .fluid-container {
+        max-width: 100vw;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        margin-top:10px;
+        
+    }
+    /* border: 2px solid; */
+
+    .left {
+        width: 17%;
+        padding: 5px;
+        color: wheat;
+        background-color: white;
+        margin-right: 10px;
+        overflow-y: scroll;
+        scrollbar-width: thin;
+        scrollbar-color: transparent transparent;
+        box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5); 
+        border-radius: 5px;
+        color: black;
+        
+    }
+    .left h2{
+        font-size: 20px;
+        /* text-align: center; */
+        padding-left: 10px;
+        font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        font-weight: bold;
+    }
+    .left h3{
+        font-size: 12px;
+        font-weight: 600;
+        color: black;
+        padding-left: 10px;
+    }
+
+    .left::-webkit-scrollbar {
+        width: 0.1rem;
+    }
+
+    .left::-webkit-scrollbar-thumb {
+        background: transparent;
+        /* Hide the scrollbar thumb */
+    }
+    select, select option {
+        font-family: 'Times New Roman', Times, serif;
+    }
+    select {
+        width: 40%;
+        padding: 10px;
+        border: 2px solid black;
+        color: black;
+        font-weight: bold;
+    }
+    
+    .priceSort{
+        /* text-align: center; */
+        padding: 15%;
+        color: rgb(97, 94, 94);
+        font-weight: 600;
+        font-size: 12px;
+        padding-top: 15px;
+    }
+   
+    .right {
+        width: 76%;
+        background-color: white;
+        display: flex;
+        flex-wrap: wrap;
+        box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5); 
+        justify-content: space-between;
+    }
+
+    .pro.product-card {
+        width: calc(33.33% - 10px);
+        margin: 0;
+    }
+
+
+    .description {
+    display: -webkit-box;
+    -webkit-line-clamp: 5; 
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis; 
+    }
+    .pro{
+        max-height: 60vh; 
+        overflow: scroll;
+        scrollbar-color: transparent transparent;
+    }
+
+    .pro::-webkit-scrollbar {
+        width: 0.1rem;
+        
+    }
+
+    .pro::-webkit-scrollbar-thumb {
+        background: transparent;
+        
+    }
+
+    .productImages {
+        position: relative;
+    }
+    .productImages img {
+        display: none;
+        max-width: 100%;
+        height: auto;
+    }
+    .productImages img.active {
+        display: block;
+    }
+    
+    a.cart:hover{
+        font-size: x-large;        
+    }
+    .cart svg {
+        fill: currentColor;
+        transition: fill 0.3s; /* Add a smooth transition effect */
+    }
+
+    /* Apply a different color on hover */
+    .cart:hover svg {
+        fill: rgb(0, 8, 255); /* Change the color to your desired color */
+    }
+   
+
+</style>
+
+<style>
+
+</style>
+
+{% endblock %}
+
+
+{% block navbar %}
+
+<li style="display: flex; flex-direction: column;" class="" id="userListItem">
+    <button style="background-color: transparent; border: none;" onclick="toggleProfile()">
+        <img src="/media/{{ user_data.profile }}" height="55px" style="border-radius: 50%;" alt="">
+        <span style="padding-left: 10px; font-weight: bold;">{{ user_data.username }}</span>
+    </button>    
+</li>
+{% endblock %}
+
+
+{% block content %}
+
+
+<div class="fluid-container">
+    <div class="left" style="background-color:transparent;">
+        <div class="left_heading">
+            <h2>Filters</h2>
+            <hr/>
+        </div>
+        <div class="left_heading">
+            <h3>PRICE</h3>
+            <!-- <hr/> -->
+            <!-- <input type="range" name="" id="" min="1" max="100000" > -->
+            <div class="priceBox" style="display: flex;align-items: center;justify-content: center;">
+                <select name="min-price" id="minPriceSelector">
+                    <option value="1" selected>&#x20B9; 1</option>
+                    <option value="250">&#x20B9; 250</option>
+                    <option value="1000">&#x20B9; 1000</option>
+                    <option value="2000">&#x20B9; 2000</option>
+                    <option value="5000">&#x20B9; 5000</option>
+                    <option value="10000">&#x20B9; 10,000</option>
+                    <option value="30000">&#x20B9; 30,000</option>
+                </select>
+                <span style="padding-left: 5px;padding-right: 6px; color: black; font-size: small;"> to</span>
+                <select name="max-price" id="maxPriceSelector">
+                    <option value="1000">&#x20B9; 1000</option>
+                    <option value="2000">&#x20B9; 2000</option>
+                    <option value="5000">&#x20B9; 5000</option>
+                    <option value="10000">&#x20B9; 10,000</option>
+                    <option value="30000">&#x20B9; 30,000</option>
+                    <option value="50000">&#x20B9; 50,000</option>
+                    <option value="100000">&#x20B9; 1 Lakh</option>
+                    <option value="100001" selected>&#x20B9; 1 Lakh+</option>
+                </select>
+            </div>
+            <div class="priceSort">
+                <div class="option1">
+                    <input type="radio" name="priceSortType" id="ascendingOrder">
+                    <label for="ascendingOrder">Ascending Order of Price</label>
+                </div>
+                <div class="option2">
+                    <input type="radio" name="priceSortType" id="descendingOrder">
+                    <label for="descendingOrder">Descending Order of Price</label>
+                </div>
+            </div>
+            <hr/>
+            <h3>COMPANIES</h3>
+            <div class="company-checkboxes" style="padding-left: 5%; padding-top: 6px; font-size: 12px;font-weight: 600;">
+
+                {% for category_data in data %}
+
+                    {% for company_name in category_data.company %}
+                        <!-- <h1>{{company_list}}</h1> -->
+                        <input type="checkbox" id="company1" class="company-filter" value="{{company_name}}">
+                        <label for="company1">{{company_name}}</label><br>
+                    {% endfor %}
+                {% endfor %}
+
+            </div>
+            <hr/>
+        </div>
+   
+    </div>
+    <!-- product_subcategory.html -->
+    <div class="right" style="background-color:transparent;">
+        {% for category_data in data %}
+        <section id="product1" class="section-p1">
+            <div class="category-container" data-category-id="{{ category_data.category_id }}">
+                <h2>{{ category_data.category_name }} - {{ category_data.subcategory_name }}</h2>
+                <div class="pro-container">
+                    {% for product_list in category_data.product_list %}
+                    {% for product in product_list %}
+                    
+                    <div class="pro product-card" onmouseover="startImageSlider(this)" data-price="{{ product.selling_price }}">
+                        <a href="/product/{{product.product_id}}">
+                            <div class="productImages">
+                                <img src="/media/{{ product.product_image }}" alt="{{ product.product_name }}" class="active">
+                                <div class="additionalImages">
+                                    {% for additional_images in product.additional_images %}
+
+                                    {% if additional_images is not null %}
+                                    <img src="/media/{{additional_images}}" alt="">
+                                    <!-- <img src="/media/shop/additional_images/51DOADQtN0L._SX679_.jpg" alt="">
+                                    <img src="/media/shop/additional_images/51Sn5X2gfaL._SX522_.jpg" alt=""> -->
+                                    {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </a>
+                        <div class="des">
+                            <span>{{ product.company_name }}</span>
+                            <h5>{{ product.product_name|slice:":50" }}...</h5>
+                           
+                            <h4>&#x20B9; {{ product.selling_price }}.00</h4>
+                            <p class="description">{{ product.description }}...</p>
+
+                            <!-- <p>{{ product.tags }}</p> -->
+                        </div>
+                        <div>
+                            
+                        </div>
+                        <a href="/product/{{product.product_id}}" class="cart" style="position:sticky;left:100%; background-color: transparent;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-cart-fill" viewBox="0 0 16 16">
+                                <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                            </svg>
+                        </a>
+                    </div>
+                    {% endfor %}
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+        {% endfor %}
+    </div>
+ 
+</div>
+<script>
+    // Get references to the select elements
+const minPriceSelector = document.getElementById("minPriceSelector");
+const maxPriceSelector = document.getElementById("maxPriceSelector");
+
+// Get references to all product cards
+const productCards = document.querySelectorAll(".pro.product-card");
+
+// Add event listeners to select elements
+minPriceSelector.addEventListener("change", filterProductsByCompanyAndPrice);
+maxPriceSelector.addEventListener("change", filterProductsByCompanyAndPrice);
+
+// Function to filter products based on selected companies and price
+function filterProductsByCompanyAndPrice() {
+    const selectedCompanies = Array.from(companyCheckboxes)
+        .filter((checkbox) => checkbox.checked)
+        .map((checkbox) => checkbox.value);
+
+    const minPrice = parseInt(minPriceSelector.value, 10);
+    const maxPrice = parseInt(maxPriceSelector.value, 10);
+
+    let productsFound = false; // Initialize a flag to track if any products are found
+
+    productCards.forEach((card) => {
+        const productCompany = card.querySelector(".des span").textContent;
+        const productPrice = parseInt(card.getAttribute("data-price"), 10);
+
+        // Check if the product meets both company and price criteria
+        if (
+            (selectedCompanies.length === 0 || selectedCompanies.includes(productCompany)) &&
+            (minPrice === 1 && maxPrice === 100001 || (productPrice >= minPrice && productPrice <= maxPrice))
+        ) {
+            card.style.display = "block"; // Show the product card
+            productsFound = true; // Set the flag to true
+        } else {
+            card.style.display = "none"; // Hide the product card
+        }
+    });
+
+    // Show an alert if no products are found
+    if (!productsFound) {
+        alert("No products found matching the selected criteria.");
+        window.location.reload();
+    }
+}
+// Filter by company
+const companyCheckboxes = document.querySelectorAll(".company-filter");
+
+// Add event listeners to company checkboxes
+companyCheckboxes.forEach((checkbox) => {
+    checkbox.addEventListener("change", filterProductsByCompanyAndPrice);
+});
+
+// Function to sort products based on price
+function sortProducts(order) {
+    const rightContainer = document.querySelector(".right");
+    const categoryContainers = rightContainer.querySelectorAll(".category-container");
+
+    categoryContainers.forEach((container) => {
+        const productCards = container.querySelectorAll(".pro.product-card");
+        const productArray = Array.from(productCards);
+
+        // Sort the product cards based on data-price attribute
+        productArray.sort((a, b) => {
+            const priceA = parseFloat(a.getAttribute("data-price"));
+            const priceB = parseFloat(b.getAttribute("data-price"));
+
+            if (order === "asc") {
+                return priceA - priceB; // Ascending order
+            } else {
+                return priceB - priceA; // Descending order
+            }
+        });
+
+        // Clear the current sub-category container
+        container.querySelector(".pro-container").innerHTML = "";
+
+        // Append the sorted product cards back to the sub-category container
+        productArray.forEach((productCard) => {
+            container.querySelector(".pro-container").appendChild(productCard);
+        });
+    });
+}
+
+// Add event listeners for sorting when radio buttons are clicked
+document.getElementById("ascendingOrder").addEventListener("click", function () {
+    sortProducts("asc");
+});
+
+document.getElementById("descendingOrder").addEventListener("click", function () {
+    sortProducts("desc");
+});
+
+// Function to start the image slider when the card is hovered
+function startImageSlider(card) {
+    const images = card.querySelectorAll(".productImages img");
+    let currentIndex = 0;
+    let lastDisplayedIndex = 0;
+    card.classList.remove("active");
+
+    function showNextImage() {
+        images[lastDisplayedIndex].classList.remove("active");
+        currentIndex = (currentIndex + 1) % images.length;
+
+        images[currentIndex].classList.add("active");
+        lastDisplayedIndex = currentIndex;
+    }
+
+    // Start the image slider when the card is hovered
+    const intervalId = setInterval(showNextImage, 1000);
+
+    // Stop the image slider and reset the image when the card is no longer hovered
+    card.addEventListener("mouseout", () => {
+        clearInterval(intervalId);
+        resetImage(card, lastDisplayedIndex);
+    });
+}
+
+// Function to reset the image when the card is no longer hovered
+function resetImage(card, lastDisplayedIndex) {
+    // Set the last displayed image as active
+    const images = card.querySelectorAll(".productImages img");
+    images.forEach((img, index) => {
+        if (index === lastDisplayedIndex) {
+            img.classList.add("active");
+        } else {
+            img.classList.remove("active");
+        }
+    });
+}
+
+// Call the initial filtering function
+filterProductsByCompanyAndPrice();
+
+</script>
+
+
+{% endblock %}

@@ -1,0 +1,343 @@
+{% extends 'main_pages/base.html' %}
+
+{% block styleCss %}
+
+
+<style>
+    .mycart-container {
+        width: 90vw;
+        /* background-color: aqua */
+    }
+
+    label {
+        font-weight: bold;
+        color: brown;
+    }
+</style>
+
+
+{% endblock %}
+
+{% block navbar %}
+
+<li style="display: flex; flex-direction: column;" class="" id="userListItem">
+    <button style="background-color: transparent; border: none;" onclick="toggleProfile()">
+        <img src="/media/{{ user_data.profile }}" height="55px" style="border-radius: 50%;" alt="">
+        <span style="padding-left: 10px; font-weight: bold;">{{ user_data.username }}</span>
+    </button>
+</li>
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid mycart-container">
+    <div class="Step1" style="min-height: 100vh;">
+        <h1 style="font-size: 30px; font-weight: bold; padding:10px;">Step 1:- Products In Cart to be Checkout</h1>
+
+        <table style="width: 100%; text-align: center;">
+            <tr style="height: 90px;background-color: orangered;color: white; font-weight: bolder;">
+                <th style="width: 5%;">Sl No</th>
+                <th style="width: 20%;">Image</th>
+                <th style="width: 45%;">Product Name</th>
+                <th style="width: 10%;">Price</th>
+                <th style="width: 10%;">Quantity</th>
+                <th style="width: 10%;">Total</th>
+            </tr>
+        </table>
+
+        <br />
+        <div style="display: flex; justify-content:space-around;">
+
+
+            <div class="grand-total" style="width: 30%; padding-left: 10px;">
+                <div
+                    style="width: 100%; background-color: orangered; color: white;padding: 10px; padding-left: 15px; height: 40px; font-weight: bold;">
+                    GRAND TOTAL</div>
+                <p style="font-weight: 700;">Sub Total :- <span id="subTotAmnt"></span></p>
+                <p style="font-weight: 700;">Coupon Discount :- </p>
+                <hr>
+                <p style="font-weight: 700;">Total :- <span id="totalAmnt"></span> </p>
+
+            </div>
+
+
+        </div>
+    </div>
+    <br>
+    <div class="Step2" style="min-height: 100vh;">
+        <div style="width: 100%; display: flex;">
+            <div class="form" style="width: 70%; padding: 10px;">
+                <h1 style="font-size: 30px; font-weight: bold; padding:10px;">Step 2:- Enter Shipment Details </h1>
+                <form method="POST" action="">
+                    <div class="form-row">
+                        <div class="col-md-4 mb-4">
+                            <label for="FirstNameLabel">First name</label>
+                            <input type="text" class="form-control" id="FirstName" name="FirstName"
+                                placeholder="First name" readonly
+                                style="padding: 15px; font-size: small; font-weight: bold; font-style: italic;"
+                                value="{{ user_data.firstName }}">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="LastNameLabel">Last name</label>
+                            <input type="text" class="form-control" id="LastName" name="LastName"
+                                placeholder="Last name" readonly
+                                style="padding: 15px; font-size: small; font-weight: bold; font-style: italic;"
+                                value="{{ user_data.lastName }}">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="PhoneLabel">Phone Number:- </label>
+                            <input type="number" class="form-control" id="PhoneNumber" name="PhoneNumber"
+                                placeholder="Phone Number (+91)" readonly required
+                                style="padding: 15px; font-size: small; font-weight: bold; font-style: italic;"
+                                value="{{ user_data.phoneNumber }}">
+                        </div>
+
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-6 mb-3">
+                            <label for="UsernameLabel">Username</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="inputGroupPrepend2">@</span>
+                                </div>
+                                <input type="text" class="form-control" id="Username" placeholder="Username"
+                                    name="Username" aria-describedby="inputGroupPrepend2" required readonly
+                                    style="padding: 15px; font-size: small; font-weight: bold; font-style: italic;"
+                                    value="{{ user_data.username }}">
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="EmailLabel">E-Mail ID:- </label>
+                            <input type="email" class="form-control" id="EmailId" placeholder="E-Mail ID" name="EmailId"
+                                readonly required
+                                style="padding: 15px; font-size: small; font-weight: bold; font-style: italic;"
+                                value="{{ user_data.email }}">
+                        </div>
+
+                        <input type="number" value="{{user_data.userid}}" id="userId" name="userId" hidden>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-4 mb-3">
+                            <label for="TotalAmmountLabel">Total Ammount:- </label>
+                            <input type="text" class="form-control" id="TotalAmmount" name="TotalAmmount"
+                                placeholder="Total Ammount in RS" readonly required
+                                style="padding: 15px; font-size: small; font-weight: bold; font-style: italic;">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="TransactionProofLabel">Upload Transaction Proof :- </label>
+                            <input type="file" name="image" id="imageInput" onchange="uploadImage()">
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label for="TransactionLabel">Transaction ID:- </label>
+                            <input type="text" class="form-control" id="TransactionId" name="TransactionId"
+                                placeholder="Transaction ID" required
+                                style="padding: 15px; font-size: small; font-weight: bold; font-style: italic;"
+                                required>
+                        </div>
+
+                    </div>
+                    <div class="form-row" style="padding: 10px;">
+                        <label for="addressLabel">Address:-</label>
+                        <textarea name="Address" id="Address" cols="100" rows="5"
+                            style="padding: 15px;color: blue; font-weight: 800;"></textarea>
+                    </div>
+
+                    <button id="submitButton" type="submit"
+                        style="padding: 10px; font-weight: bold; width: 200px; height: 50px; background-color: black; color: white;">Submit</button>
+                </form>
+            </div>
+            <div class="qrCode">
+
+                <img src="/media/shop/admin_images/paytm.png" width="100%" alt="qrcodePayment" style="padding: 10px;">
+            </div>
+        </div>
+
+    </div>
+
+
+</div>
+
+<!-- Inside the script tag at the end of your template -->
+<script>
+    function uploadImage() {
+        const fileInput = document.getElementById('imageInput');
+        const file = fileInput.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('image', file);
+
+        fetch('/api/authenticate_upi/', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.upi_transaction_id) {
+                    document.getElementById('TransactionId').value = data.upi_transaction_id;
+                    // console.log('UPI Transaction ID:', data.upi_transaction_id);
+                } else {
+                    console.log('Failed to extract UPI Transaction ID');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+</script>
+
+
+<script>
+    var productsPurchaseDetails = []; // Initialize an array to store product purchase details
+
+    document.addEventListener("DOMContentLoaded", function () {
+        // Fetch cart data from localStorage
+        var cartData = localStorage.getItem("cart");
+        var cart = JSON.parse(cartData);
+
+        // Get the table element
+        var table = document.querySelector("table");
+
+        // Populate the table with cart data and create the productsPurchaseDetails array
+        if (cart && cart.length > 0) {
+            var subTotal = 0; // Initialize subtotal variable
+
+            for (var i = 0; i < cart.length; i++) {
+                var row = table.insertRow(-1);
+                var slNoCell = row.insertCell(0);
+                var imageCell = row.insertCell(1);
+                var productNameCell = row.insertCell(2);
+                var priceCell = row.insertCell(3);
+                var quantityCell = row.insertCell(4);
+                var totalCell = row.insertCell(5);
+
+                // Set the product ID as a data attribute in the table row
+                row.setAttribute('data-product-id', cart[i].product_id);
+
+                slNoCell.textContent = i + 1;
+                imageCell.innerHTML = `<img src="${cart[i].productImage}" alt="Product Image" style="padding:5px; max-width: 100px; max-height: 100px;">`;
+                productNameCell.textContent = cart[i].productName;
+                priceCell.textContent = "₹ " + cart[i].sell_price + ".00";
+                quantityCell.innerHTML = `<input type="number" value="${cart[i].quantity}" readonly min="0" style="width:60px; text-align:center;font-weight:bold;padding:6px;border-radius:15px;">`;
+
+                // Calculate total for each item and update subtotal
+                var totalAmount = cart[i].sell_price * cart[i].quantity;
+                subTotal += totalAmount;
+
+                totalCell.textContent = "₹ " + totalAmount + ".00";
+
+                // Add product details to the array
+                var productDetails = {
+                    "productId": cart[i].product_id,
+                    "quantity": cart[i].quantity,
+                    "subtotal": totalAmount
+                };
+
+                productsPurchaseDetails.push(productDetails);
+            }
+
+            // Update the Sub Total and Total in the HTML
+            document.getElementById("subTotAmnt").textContent = "₹ " + subTotal + ".00";
+            document.getElementById("totalAmnt").textContent = "₹ " + subTotal + ".00";
+
+            // Set the total amount value in the input field
+            document.getElementById("TotalAmmount").value = subTotal;
+
+            // Now that the table is populated, call the function to get the products
+            var products = getProductsFromTable();
+            console.log("Purchased Products:", products);
+        }
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        // ... (existing code)
+
+        document.getElementById("submitButton").addEventListener("click", function () {
+            // Gather data from the form
+            var transactionId = document.getElementById('TransactionId').value;
+            var address = document.getElementById('Address').value;
+            // localStorage.clear();
+
+            // Check if the required fields are not empty
+            if (transactionId.trim() !== '' && address.trim() !== '') {
+                var products = getProductsFromTable();
+                var formData = {
+                    "TransactionId": transactionId,
+                    "Address": address,
+                    "TotalAmmount": document.getElementById('TotalAmmount').value,
+                    "Status": "Order Created",
+                    "userId": document.getElementById("userId").value,
+                    "products_details": products,
+
+                };
+                formData = JSON.stringify(formData);
+
+                // console.log(formData);
+
+                fetch("/api/submit_order/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: formData,
+                })
+                    .then(response => {
+                        console.log("Response status:", response.status); // Log response status
+                        // alert(response.json());
+                        return response.json(); // Ensure this line parses the JSON response
+                    })
+                    .then(data => {
+                        // Handle the response from the server
+                        if (data.msgCode === 1) {
+                            localStorage.clear(); // Clear local storage only if the order is successful
+                            alert(data.message);
+                        } else {
+                            alert(data.message);
+                        }
+
+                    })
+                    .catch(error => {
+                        console.error("Error:", error);
+                        localStorage.clear();
+                        // alert("An error occurred while submitting the order.", error);
+                    });
+            } else {
+                alert("Address and TransactionId are required!");
+            }
+        });
+    });
+
+</script>
+<script>
+    function getProductsFromTable() {
+        var products = [];
+        var table = document.querySelector("table");
+        var rows = table.querySelectorAll("tr:not(:first-child)");
+        rows.forEach(function (row) {
+            var product = {};
+            var cells = row.querySelectorAll("td");
+            // Retrieve product ID from the data attribute
+            product.id = parseInt(row.getAttribute('data-product-id'));
+            product.price = parseInt(cells[3].textContent.trim().replace("₹", "").replace(".00", "").trim());
+            product.quantity = parseInt(cells[4].querySelector("input").value.trim());
+            product.total = parseFloat(cells[5].textContent.trim().replace("₹", "").replace(".00", "").trim());
+
+            products.push(product);
+        });
+
+        return products;
+    }
+
+
+
+    var products = getProductsFromTable();
+    console.log("Purchased Products:", products);
+
+</script>
+
+
+
+{% endblock %}
